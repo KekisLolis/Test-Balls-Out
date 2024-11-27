@@ -31,7 +31,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 127c08cf5e8fce443a0fc345a1cd728b, type: 3}
-    totalSpriteSurfaceArea: 1022848
+    totalSpriteSurfaceArea: 1098384
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -50,6 +50,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 72e1083af4e7b114b888e5f1b3beffb7, type: 3}
   - {fileID: 21300000, guid: b9faacda8dbfddb4aab575f871ced2a8, type: 3}
   - {fileID: 21300000, guid: cec04f5b7d0101b4e967789d83ae5241, type: 3}
+  - {fileID: 21300000, guid: 9372fbab5b9b0c540b582c141dc60194, type: 3}
   - {fileID: 21300000, guid: 52bac56cf8e011c42a183430fec8f35f, type: 3}
   - {fileID: 21300000, guid: f24d788c595a5224c856607030eee529, type: 3}
   - {fileID: 21300000, guid: b35bfbfc95bfe394295303a6a77a9788, type: 3}
@@ -70,6 +71,7 @@ SpriteAtlas:
   - SoundOnButton
   - RestorButton
   - Finish
+  - MenuButton
   - FINGER
   - ButtonHalfCircle
   - VibroOnButton

@@ -23,12 +23,19 @@ public class GameMenu : MonoBehaviour
     public Image musicImage;
     public Sprite musicOnIcon;
     public Sprite musicOffIcon;
+    
+    public GameObject levelObject;
 
     public Vector2 vibrateStartPosition;
 
     private void Awake()
     {
         instance = this;
+    }
+    
+    public void OnLevelMenuClick()
+    {
+        levelObject.SetActive(!levelObject.activeSelf);
     }
 
     private void Start()

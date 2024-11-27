@@ -134,6 +134,7 @@ MonoBehaviour:
   - Assets/Resources/Prefabs/Fun/Labyrinth_fun_7.prefab
   fanLabyrinthsStr:
   - Assets/Resources/Prefabs/Fruits/Labyrinth_apple.prefab
+  - Assets/Resources/Prefabs/Fruits/Labyrinth_kiwi.prefab
   - Assets/Resources/Prefabs/Fruits/Labyrinth_berry.prefab
   - Assets/Resources/Prefabs/Fruits/Labyrinth_orange.prefab
   - Assets/Resources/Prefabs/Fruits/Labyrinth_peach.prefab
@@ -145,6 +146,8 @@ MonoBehaviour:
   - Assets/Resources/Prefabs/Fun/Labyrinth_fun_5.prefab
   - Assets/Resources/Prefabs/Fun/Labyrinth_fun_6.prefab
   - Assets/Resources/Prefabs/Fun/Labyrinth_fun_7.prefab
+  water: {fileID: 4803738439568453723, guid: 7d910fe365bd31e40bd0921587e72339, type: 3}
+  appleBall: {fileID: -596644876370569037, guid: 8d8b880878944dc44bebc17b9d197766, type: 3}
   ball: {fileID: 4803738439568453723, guid: ef7f45f562fed4940b8d891a8ea3dc88, type: 3}
   ballBig: {fileID: 4803738439568453723, guid: b7516d6d81dd31c44af5ec7ddbb50a19, type: 3}
   ballMid: {fileID: 4803738439568453723, guid: 6e1e1ab17a5d0ca49aabbbb775f4175e, type: 3}

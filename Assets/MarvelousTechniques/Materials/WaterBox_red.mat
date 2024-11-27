@@ -5,7 +5,8 @@ Material:
   serializedVersion: 6
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
   m_Name: WaterBox_red
   m_Shader: {fileID: 4800000, guid: 527cc91a1babb41bbb5ab5a940c3da89, type: 3}
   m_ShaderKeywords: 
@@ -29,6 +30,7 @@ Material:
     - _InvWavelength: 17
     - _Magnitude: 3.97
     - _Opacity: 0.53
+    - _RimPower: 0
     - _ShadowPower: 1
     - _Transparency: 0.14
     - _UseLightMap: 1

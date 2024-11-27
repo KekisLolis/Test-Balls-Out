@@ -21,6 +21,7 @@ public class Level : MonoBehaviour, IWaveObserver, ILevelObserver, ICaptureBallO
     public static Level instance;
     public PlayerState playerState;
     public GameConfig gameConfig;
+    public Button[] levelButtons;
 
     public float size = 2f;
 
@@ -67,6 +68,7 @@ public class Level : MonoBehaviour, IWaveObserver, ILevelObserver, ICaptureBallO
     public Text ballsCountText;
 
     public GameObject gameMenu;
+    public GameObject levelObject;
 
     ParticleSystem contactFX;
     ParticleSystem[] contactFXchildren;
@@ -110,6 +112,12 @@ public class Level : MonoBehaviour, IWaveObserver, ILevelObserver, ICaptureBallO
     void Start()
     {
         Application.targetFrameRate = 60;
+        
+        for (int i = 0; i < levelButtons.Length; i++)
+        {
+            int level = i + 1;
+            levelButtons[i].onClick.AddListener(() => LoadLevel(level));
+        }
 
 #if UNITY_IOS
         /*var delta = Vector2.up * (Screen.height - Screen.safeArea.height - Screen.safeArea.y);
@@ -265,8 +273,8 @@ public class Level : MonoBehaviour, IWaveObserver, ILevelObserver, ICaptureBallO
             if(lab.isNeedLoonka)
             {
                 loonka.SetActive(true);
-
             }
+            
             if (lab.isBoss) isBossLevel = true;
             var newLab = SpawnLab(lab, i);
 
@@ -368,12 +376,12 @@ public class Level : MonoBehaviour, IWaveObserver, ILevelObserver, ICaptureBallO
         yield return null;
     }
 
-    private void SpawnBalls( Labyrinth newLab, int max)
+    private void SpawnBalls(Labyrinth newLab, int max)
     {
         var totalMax = RemoteSettings.GetInt("maxBalls", 450);
         var hasDifferentBalls = RemoteSettings.GetBool("hasDifferentBalls", false);
         var deep = 2;
-
+        
         var sq = (int)Mathf.Sqrt(max / 5) + 1;
         var count = 0;
         for (var d = -deep; d <= deep; d++)
@@ -386,9 +394,13 @@ public class Level : MonoBehaviour, IWaveObserver, ILevelObserver, ICaptureBallO
                 else if (ballSize < 9) ballSize = 1;
                 else if (ballSize < 10) ballSize = 2;
                 if (count >= max) continue;
-                var ball = Instantiate(ballSize == 2 ? gameConfig.ballBig : ballSize == 1 ? gameConfig.ballMid : gameConfig.ball, newLab.transform);
+                var ball = Instantiate(ballSize == 2 ? gameConfig.ballBig :
+                                        ballSize == 1 ? gameConfig.ballMid :
+                                        levelText.text.Contains("Level 5") ? gameConfig.appleBall :
+                                        levelText.text.Contains("Level 6") ? gameConfig.water :
+                                        gameConfig.ball, newLab.transform);
+                
                 ball.transform.localPosition = Vector3.right * (j % sq - sq / 2) * 0.1f + Vector3.down * (j / sq - sq / 2) * 0.1f + Vector3.forward * d * 0.1f;
-
                 var scale = RemoteSettings.GetFloat(ballSize == 0 ? "ballSize0" : ballSize == 1 ? "ballSize1" : "ballSize2", 1f);
                 ball.transform.localScale *= (scale - 1f) * (totalMax - max) / totalMax + 1f;
 
@@ -398,6 +410,61 @@ public class Level : MonoBehaviour, IWaveObserver, ILevelObserver, ICaptureBallO
         }
 
         ballsCountText.text = "x " + balls.Count;
+    }
+    
+    private void LoadLevel(int level)
+    {
+        var labNum = (level - 1) * gameConfig.wavesCount;
+        foreach (var lab in labyrinths)
+        {
+            Destroy(lab.gameObject);
+        }
+        labyrinths.Clear();
+        
+        for (int i = 0; i < gameConfig.wavesCount; i++)
+        {
+            var lab = AssetPath.Load<Labyrinth>(gameConfig.labyrinthsStr[labNum + i]);
+            var newLab = SpawnLab(lab, i);
+            if (i == 0)
+            {
+                playerState.level = level - 1;
+                levelText.text = "Level " + (level);
+                SpawnBalls(newLab, playerState.totalBalls);
+            }
+        }
+        ballsCountText.text = "x " + playerState.totalBalls;
+        SpawnExit(gameConfig.wavesCount);
+        ActivateLab(activeLab);
+        ActivateRoof(activeLab);
+        labyrinths[0].transform.rotation = Quaternion.identity;
+        ActivateBalls(activeLab);
+        
+        var theme = gameConfig.levelThemeOrder.Length > 0 ? gameConfig.levelThemeOrder[playerState.level % gameConfig.levelThemeOrder.Length] : playerState.level;
+        if (gameConfig.useImages)
+        {
+            backgroundImage.sprite = AssetPath.Load<Sprite>(gameConfig.backgroundsStr[theme % gameConfig.backgroundsStr.Length]);
+        }
+        else
+        {
+            gradientBackground.SetColor(gameConfig.gradient3[theme % gameConfig.gradient1.Length], gameConfig.gradient1[theme % gameConfig.gradient3.Length]);
+        }
+        
+        gameConfig.labMaterial.SetColor("_MainColor", gameConfig.colors[theme % gameConfig.colors.Length]);
+        gameConfig.labMaterial.SetColor("_RimColor", gameConfig.colors[theme % gameConfig.colors.Length]);
+        gameConfig.tubeMaterial.SetColor("_MainColor", gameConfig.tubeColors[theme % gameConfig.tubeColors.Length]);
+        gameConfig.ballMaterial.color = gameConfig.ballColors[theme % gameConfig.ballColors.Length];
+        gameConfig.ballMiddleMaterial.color = gameConfig.ballMiddleColors[theme % gameConfig.ballMiddleColors.Length];
+        gameConfig.ballBigMaterial.color = gameConfig.ballBigColors[theme % gameConfig.ballBigColors.Length];
+        gameConfig.capMaterial.SetColor("_MainColor", gameConfig.capColors[theme % gameConfig.capColors.Length]);
+        gameConfig.capOutMaterial.SetColor("_MainColor", gameConfig.capOutColors[theme % gameConfig.capOutColors.Length]);
+
+        Shader.SetGlobalColor("_GlobalShadowColor", gameConfig.shadowColors[theme % gameConfig.shadowColors.Length]);
+
+        Instantiate(gameConfig.particles[theme % gameConfig.particles.Length]);
+        contactFX = Instantiate(gameConfig.contactFx[theme % gameConfig.contactFx.Length]);
+        contactFXchildren = contactFX.GetComponentsInChildren<ParticleSystem>();
+        
+        levelObject.SetActive(false);
     }
 
     public bool CanShowAds()
@@ -689,5 +756,6 @@ public class Level : MonoBehaviour, IWaveObserver, ILevelObserver, ICaptureBallO
 
     public void OnLevelStart()
     {
+        
     }
 }
